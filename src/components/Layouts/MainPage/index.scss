@@ -1,0 +1,10 @@
+.mainPage{
+    background-image: linear-gradient(#f5e8eb, #eeeaea, #f5e8eb );
+    padding: 15px;
+    .main__header{
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        height: 10%;
+    }
+}

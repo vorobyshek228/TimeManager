@@ -1,0 +1,14 @@
+.calendar__wrapper{
+    width: 100%;
+    height: 80%;
+    padding: 15px;
+    .calendar{
+        display: flex;
+        flex-direction: column;
+        .btn__block{
+            display: flex;
+            align-self: center;
+            justify-content: center;
+        }
+    }
+}

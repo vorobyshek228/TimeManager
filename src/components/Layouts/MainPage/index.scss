@@ -1,6 +1,9 @@
 .mainPage{
     background-image: linear-gradient(#f5e8eb, #eeeaea, #f5e8eb );
     padding: 15px;
+    height: 100%;
+    min-height: 100vh;
+    position: relative;
     .main__header{
         display: flex;
         justify-content: center;

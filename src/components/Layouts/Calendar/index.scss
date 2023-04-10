@@ -1,14 +1,36 @@
 .calendar__wrapper{
     width: 100%;
     height: 80%;
-    padding: 15px;
+    display: grid;
+    grid-template-columns: 1fr 2.5fr;
+    grid-template-rows: 50px 1fr;
+    gap: 20px;
+    .btn__block{
+        display: flex;
+        align-self: center;
+        justify-content: center;
+        gap: 15px;
+        grid-row-start: 1;
+        grid-column: 1 / 3;
+    }
+    .list{
+        margin-top: 85px;
+        grid-row-start: 2;
+    }
     .calendar{
         display: flex;
         flex-direction: column;
-        .btn__block{
-            display: flex;
-            align-self: center;
-            justify-content: center;
+        grid-row-start: 2;
+        .fc-header-toolbar{
+            margin-left: -40%;
         }
+    }
+    .title{
+        text-align: center;
+        font-size: 24px;
+    }
+    .radio__container{
+        display: flex;
+        gap: 30px;
     }
 }

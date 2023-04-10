@@ -1,31 +1,68 @@
 import dayGridPlugin from '@fullcalendar/daygrid' 
 import FullCalendar from "@fullcalendar/react"
 import timeGridPlugin from '@fullcalendar/timegrid'
-import { useRef} from 'react'
+import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
+import listPlugin from '@fullcalendar/list'
+import { useRef, useState} from 'react'
 import Btn from '../../styled/Btn'
 import './index.scss'
+import { useSelector } from 'react-redux';
+import AddEventModal from '../../modal_addEvent';
+import ModalWrapper from '../../styled/modalWrapper';
+import { useEffect } from 'preact/hooks';
 
 
 const Calendar = () => {
+    const events12 = useSelector((state:any) => state.event.events)
+    const [flag, setFlag] = useState(false);
+    const [dateInfo, setDateInfo] = useState<DateClickArg | null>(null)
     let calendarRef = useRef<FullCalendar | null>(null);
     let changeView = (view:string) =>{
         if(calendarRef.current){
             let calendarApi = calendarRef.current.getApi();
-            calendarApi.changeView('timeGridDay');
+            switch (view){
+                case 'month':
+                    calendarApi.changeView('dayGridMonth');
+                    break
+                case 'week':
+                    calendarApi.changeView('timeGridWeek');
+                    break
+                case 'day':
+                    calendarApi.changeView('timeGridDay');
+                    break
+                default:
+                    calendarApi.changeView('dayGridMonth');
+            }
         }
     }
     return (
-        <div className='calendar__wrapper'>
-            <div className="calendar">
+        <>
+            <div className='calendar__wrapper'>
                 <div className="btn__block">
-                    <Btn onClick={() => changeView('month')}>Month</Btn>
-                    <Btn onClick={() => changeView('month')}>Week</Btn>
-                    <Btn onClick={() => changeView('month')}>Day</Btn>
+                    <Btn onClick={() => changeView('month')} size='large'>Month</Btn>
+                    <Btn onClick={() => changeView('week')} size='large'>Week</Btn>
+                    <Btn onClick={() => changeView('day')} size='large'>Day</Btn>
                 </div>
-                <FullCalendar ref={calendarRef} plugins={[ timeGridPlugin, dayGridPlugin ]} initialView="dayGridMonth" />
+                <div className="list">
+                    <FullCalendar initialView='listWeek' plugins={[ listPlugin ]} headerToolbar={false}/>
+                </div>
+                <div className="calendar">
+                    <FullCalendar 
+                        ref={calendarRef} 
+                        plugins={[ timeGridPlugin, dayGridPlugin, interactionPlugin ]} 
+                        weekNumberCalculation='ISO' 
+                        initialView="dayGridMonth" 
+                        height='95vh'
+                        dateClick={function(info){
+                            setDateInfo(info);
+                            setFlag(true)
+                        }}
+                    />
+                </div>
+                <AddEventModal flag={flag} dateInfo={dateInfo}/>
             </div>
-
-        </div>
+            <ModalWrapper flag={flag} onClick={() => {setFlag(false); setDateInfo(null)}}/>
+        </>
     )
 }
 export default Calendar

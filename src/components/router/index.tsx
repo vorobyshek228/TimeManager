@@ -11,7 +11,7 @@ export const router = createBrowserRouter(createRoutesFromElements(
         <Route index element = {<Calendar />}/> 
         <Route path = 'settings' element = {<Settings/>}/>
         <Route path = 'htu' element = {<Tutorial/>}/>
-        <Route path = 'contacts' element ={<Contacts/>} />
+        <Route path = 'about' element ={<Contacts/>} />
     </Route>
     </>
 ))

@@ -6,7 +6,7 @@ const NavBlock = () =>{
             <NavLink to='/'>Calendar</NavLink>
             <NavLink to='/htu'>How to use</NavLink>
             <NavLink to='/settings'>Settings</NavLink>
-            <NavLink to='/contacts'>Contact us</NavLink>                
+            <NavLink to='/about'>About us</NavLink>                
         </div>
     )
 }

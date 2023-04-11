@@ -23,6 +23,7 @@ const Calendar = () => {
             switch (view){
                 case 'month':
                     calendarApi.changeView('dayGridMonth');
+                    console.log(events12)
                     break
                 case 'week':
                     calendarApi.changeView('timeGridWeek');
@@ -44,11 +45,12 @@ const Calendar = () => {
                     <Btn onClick={() => changeView('day')} size='large'>Day</Btn>
                 </div>
                 <div className="list">
-                    <FullCalendar initialView='listWeek' plugins={[ listPlugin ]} headerToolbar={false}/>
+                    <FullCalendar initialView='listWeek' plugins={[ listPlugin ]} headerToolbar={false} events={events12} />
                 </div>
                 <div className="calendar">
                     <FullCalendar 
-                        ref={calendarRef} 
+                        ref={calendarRef}
+                        events={events12} 
                         plugins={[ timeGridPlugin, dayGridPlugin, interactionPlugin ]} 
                         weekNumberCalculation='ISO' 
                         initialView="dayGridMonth" 
@@ -59,7 +61,7 @@ const Calendar = () => {
                         }}
                     />
                 </div>
-                <AddEventModal flag={flag} dateInfo={dateInfo}/>
+                <AddEventModal flag={flag} setFlagHandler={()=>setFlag(false)} dateInfo={dateInfo}/>
             </div>
             <ModalWrapper flag={flag} onClick={() => {setFlag(false); setDateInfo(null)}}/>
         </>

@@ -17,13 +17,16 @@
     "@types/node": "^16.18.16",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
+    "@types/react-time-picker": "^6.0.0",
     "package.json": "^2.0.1",
     "react": "^18.2.0",
+    "react-datepicker": "^4.11.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.5",
     "react-router": "^6.9.0",
     "react-router-dom": "^6.9.0",
     "react-scripts": "5.0.1",
+    "react-ts-timepicker": "^0.1.2",
     "redux": "^4.2.1",
     "sass": "^1.59.3",
     "styled-components": "^5.3.9",
@@ -55,6 +58,7 @@
     ]
   },
   "devDependencies": {
+    "@types/react-datepicker": "^4.10.0",
     "@types/styled-components": "^5.1.26"
   },
   "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",

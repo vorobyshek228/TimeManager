@@ -1,7 +1,13 @@
 
 type Events = {
-    dateStr:string,
+    startDate:string | null,
+    endDate?:string | null,
     title:string,
-    allDay:boolean
+    allDay:boolean,
+    // start: Date,
+    // end?: Date,
+    startTime?: string | null,
+    endTime?: string | null,
+    id: string
 }
 export default Events

@@ -10,7 +10,7 @@ const eventSlice = createSlice({
     initialState,
     reducers:{
         addEvent(state, action:EventAction){
-            state.events = [...state.events, action.payload]
+            state.events = state.events.concat(action.payload)
         }
     }
 })

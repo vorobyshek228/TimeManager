@@ -1,4 +1,4 @@
-import Events from '../types/events'
+import Events from './events'
 
 export type State = {
     events: Events[]

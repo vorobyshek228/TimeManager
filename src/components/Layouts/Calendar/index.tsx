@@ -4,26 +4,31 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list'
 import { useRef, useState} from 'react'
-import Btn from '../../styled/Btn'
+import Btn from '../../../styled/Btn'
 import './index.scss'
 import { useSelector } from 'react-redux';
 import AddEventModal from '../../modal_addEvent';
-import ModalWrapper from '../../styled/modalWrapper';
-import { useEffect } from 'preact/hooks';
+import ModalWrapper from '../../../styled/modalWrapper';
+import { useEffect } from 'react';
+import eventSlice from '../../../store/eventSlice';
+import store from '../../../store';
+import { EventClickArg } from '@fullcalendar/core';
 
 
 const Calendar = () => {
-    const events12 = useSelector((state:any) => state.event.events)
+    const events = useSelector((state:any) => state.event.events)
     const [flag, setFlag] = useState(false);
+    const [event, setEvent] = useState(events)
     const [dateInfo, setDateInfo] = useState<DateClickArg | null>(null)
+    const [eventInfo, setEventInfo] = useState<EventClickArg | null>(null)
     let calendarRef = useRef<FullCalendar | null>(null);
     let changeView = (view:string) =>{
         if(calendarRef.current){
             let calendarApi = calendarRef.current.getApi();
+
             switch (view){
                 case 'month':
                     calendarApi.changeView('dayGridMonth');
-                    console.log(events12)
                     break
                 case 'week':
                     calendarApi.changeView('timeGridWeek');
@@ -36,6 +41,27 @@ const Calendar = () => {
             }
         }
     }
+    const handler = (eventInfo:EventClickArg) =>{
+        setEventInfo(eventInfo)
+        setFlag(true)
+
+    }
+    useEffect(()=>{
+        setEvent(events)
+    },[events])
+    useEffect(()=>{
+        fetch('https://63b93fc26f4d5660c6e8866a.mockapi.io/api/courseProject/events', {
+            method: 'GET',
+            headers: {'content-type':'application/json'},
+            }).then(res => {
+            if (res.ok) {
+                return res.json();
+            }
+            }).then(events => {
+                store.dispatch(eventSlice.actions.addEvent(events));
+                setEvent(events)
+            })
+    },[])
     return (
         <>
             <div className='calendar__wrapper'>
@@ -45,23 +71,28 @@ const Calendar = () => {
                     <Btn onClick={() => changeView('day')} size='large'>Day</Btn>
                 </div>
                 <div className="list">
-                    <FullCalendar initialView='listWeek' plugins={[ listPlugin ]} headerToolbar={false} events={events12} />
+                    <FullCalendar initialView='listWeek' plugins={[ listPlugin, timeGridPlugin ]} headerToolbar={false} events={event} />
                 </div>
                 <div className="calendar">
                     <FullCalendar 
                         ref={calendarRef}
-                        events={events12} 
+                        events={event} 
                         plugins={[ timeGridPlugin, dayGridPlugin, interactionPlugin ]} 
                         weekNumberCalculation='ISO' 
                         initialView="dayGridMonth" 
                         height='95vh'
+                        eventClick={function(eventInfo){
+                            handler(eventInfo)
+                        }}
+                        droppable={true}
+                        editable={true}
                         dateClick={function(info){
                             setDateInfo(info);
                             setFlag(true)
                         }}
                     />
                 </div>
-                <AddEventModal flag={flag} setFlagHandler={()=>setFlag(false)} dateInfo={dateInfo}/>
+                <AddEventModal flag={flag} eventInfo={eventInfo} setFlagHandler={()=>{setFlag(false); setDateInfo(null)}} dateInfo={dateInfo}/>
             </div>
             <ModalWrapper flag={flag} onClick={() => {setFlag(false); setDateInfo(null)}}/>
         </>

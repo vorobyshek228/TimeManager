@@ -1,29 +1,36 @@
-import ModalEvent from "../styled/modalEvent"
+import ModalEvent from "../../styled/modalEvent"
 import { DateClickArg } from '@fullcalendar/interaction';
-import { useState } from "react";
-import DatePicker, { ReactDatePicker } from "react-datepicker";
-
-
+import { useEffect, useState } from "react";
+import DatePicker from "react-datepicker";
+import { EventClickArg } from '@fullcalendar/core';
 import "react-datepicker/dist/react-datepicker.css";
-import TimePicker from "react-time-picker";
 import 'react-time-picker/dist/TimePicker.css';
 import 'react-clock/dist/Clock.css';
-import Btn from "../styled/Btn";
-import store from "../store";
-import eventSlice from "../store/eventSlice";
+import Btn from "../../styled/Btn";
+import store from "../../store";
+import eventSlice from "../../store/eventSlice";
 
 
 
-const AddEventModal = ({flag, dateInfo, setFlagHandler}:{flag:boolean, dateInfo?: DateClickArg | null, setFlagHandler:() => void}) =>{
+const AddEventModal = ({flag, dateInfo, setFlagHandler, eventInfo}:{flag:boolean,eventInfo?: EventClickArg | null , dateInfo?: DateClickArg | null, setFlagHandler:() => void}) =>{
     const [title, setTitle] = useState('');
     const [allDay, setAllDay] = useState(false)
-    const [valueTimeStart, onChangeTimeStart] = useState<Date | null>();
-    const [valueTimeEnd, onChangeTimeEnd] = useState<Date | null>();
-    const [startDate, setStartDate] = useState<Date>(new Date());
-    const [endDate, setEndDate] = useState<Date>(new Date());
+    const [startDate, setStartDate] = useState<Date| null>(new Date());
+    const [endDate, setEndDate] = useState<Date| null>();
+    useEffect(()=>{
+        if(dateInfo){
+            setStartDate(dateInfo.date)
+            console.log('ins date')
+        }
+    },[dateInfo])
     const handleChangeTitle = (e: React.FormEvent<HTMLInputElement>) =>{
         setTitle(e.currentTarget.value)
     }
+    
+    let minTime = new Date();
+    minTime.setHours(0)
+    let maxTime = new Date();
+    maxTime.setHours(12, 0, 0, 0);
     const allDayHandler = (e: React.FormEvent<HTMLInputElement>) => {
         if(e.currentTarget.checked) {
             setAllDay(true)
@@ -31,12 +38,32 @@ const AddEventModal = ({flag, dateInfo, setFlagHandler}:{flag:boolean, dateInfo?
     }
     const closeHandler = () =>{
         store.dispatch(eventSlice.actions.addEvent({
-            startDate: startDate.toISOString(),
+            start: startDate?.toISOString(),
             title,
             id: Math.random() + '',
-            allDay
+            allDay,
+            end: endDate?.toISOString(),
         }));
+        setTitle('');
+        setAllDay(false);
+        setStartDate(new Date());
+        setEndDate(null);
         setFlagHandler();
+        const newEvent = {
+            start: startDate?.toISOString(),
+            title,
+            id: Math.random() + '',
+            allDay,
+            end: endDate?.toISOString(),
+        }
+        fetch('https://63b93fc26f4d5660c6e8866a.mockapi.io/api/courseProject/events', {
+            method: 'POST',
+            headers: {'content-type':'application/json'},
+            body: JSON.stringify(newEvent)
+            }).then(res => {
+            if (res.ok) {
+                return res.json();
+            }})
     }
     if(flag){
         return(
@@ -45,59 +72,44 @@ const AddEventModal = ({flag, dateInfo, setFlagHandler}:{flag:boolean, dateInfo?
                 <input type="text" placeholder="Print your title of Event" onChange={handleChangeTitle}/>
                 <div className="radio__container">
                     <label>Do you want this event for all day?</label>
-                    <input type="checkbox" name="allDay" id="allDay" onChange={allDayHandler}></input>
+                    <input type="checkbox" name="allDay" id="allDay" onChange={allDayHandler} value={title}></input>
                 </div>
                 <div className="date__container">
                     <div className="date__wrapper">
                         <span>Set start date</span>
                         <DatePicker
-                            locale={'gb'}
                             selected={startDate}
+                            calendarStartDay={1}
                             onChange={(date: Date) => setStartDate(date)}
                             selectsStart
                             isClearable
                             startDate={startDate}
                             endDate={endDate}
+                            timeFormat="HH:mm"
+                            timeIntervals={15}
+                            timeCaption="time"
+                            dateFormat="MMMM d, yyyy HH:mm "
+                            showTimeSelect
                         />
                         <span>Set end date</span>
                         <DatePicker
                             selected={endDate}
                             onChange={(date: Date) => setEndDate(date)}
                             selectsEnd
+                            calendarStartDay={1}
                             isClearable
                             startDate={startDate}
                             endDate={endDate}
                             minDate={startDate}
+                            timeFormat="HH:mm"
+                            timeIntervals={15}
+                            timeCaption="time"
+                            dateFormat="MMMM d, yyyy HH:mm "
+                            showTimeSelect
                         />
                     </div>
                     <div className="time__wrapper">
-                        <span>Set start date</span>
-                        <DatePicker
-                            selected={valueTimeStart}
-                            onChange={(date) => onChangeTimeStart(date)}
-                            showTimeSelect
-                            selectsStart
-                            isClearable
-                            showTimeSelectOnly
-                            timeIntervals={15}
-                            timeCaption="Time"
-                            timeFormat="HH:mm"
-                            dateFormat="hh:mm "
-                        />
-                        <span>Set end date</span>
-                        <DatePicker
-                            selected={valueTimeEnd}
-                            onChange={(date) => onChangeTimeEnd(date)}
-                            showTimeSelect
-                            selectsEnd
-                            isClearable
-                            showTimeSelectOnly
-                            timeIntervals={15}
-                            timeCaption="Time"
-                            timeFormat="HH:mm"
-                            dateFormat="hh:mm "
-                            minDate={valueTimeStart}
-                        />
+                        
                     </div>
                 </div>
                 <Btn onClick={closeHandler}>Add</Btn>

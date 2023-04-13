@@ -20,11 +20,16 @@ const AddEventModal = ({flag, dateInfo, setFlagHandler, eventInfo}:{flag:boolean
     useEffect(()=>{
         if(dateInfo){
             setStartDate(dateInfo.date)
-            console.log('ins date')
         }
-    },[dateInfo])
+        if(eventInfo){
+            setStartDate(eventInfo.event.start);
+            setTitle(eventInfo.event.title);
+            setEndDate(eventInfo.event.end);
+            setAllDay(eventInfo.event.allDay);
+        }
+    },[dateInfo, eventInfo])
     const handleChangeTitle = (e: React.FormEvent<HTMLInputElement>) =>{
-        setTitle(e.currentTarget.value)
+        setTitle(e.currentTarget.value);
     }
     
     let minTime = new Date();
@@ -37,13 +42,24 @@ const AddEventModal = ({flag, dateInfo, setFlagHandler, eventInfo}:{flag:boolean
         } else setAllDay(false)
     }
     const closeHandler = () =>{
-        store.dispatch(eventSlice.actions.addEvent({
-            start: startDate?.toISOString(),
-            title,
-            id: Math.random() + '',
-            allDay,
-            end: endDate?.toISOString(),
-        }));
+        if(eventInfo){
+            store.dispatch(eventSlice.actions.editEvent({
+                start: startDate?.toISOString(),
+                title,
+                id: eventInfo.event.id,
+                allDay,
+                end: endDate?.toISOString(),
+            }));
+        } else {
+            store.dispatch(eventSlice.actions.addEvent({
+                start: startDate?.toISOString(),
+                title,
+                id: Math.random() + '',
+                allDay,
+                end: endDate?.toISOString(),
+            }));
+        }
+        
         setTitle('');
         setAllDay(false);
         setStartDate(new Date());
@@ -69,10 +85,10 @@ const AddEventModal = ({flag, dateInfo, setFlagHandler, eventInfo}:{flag:boolean
         return(
             <ModalEvent>
                 <h2 className="title">Add Event</h2>
-                <input type="text" placeholder="Print your title of Event" onChange={handleChangeTitle}/>
+                <input type="text" placeholder="Print your title of Event" onChange={handleChangeTitle} value={title} className="input__title"/>
                 <div className="radio__container">
                     <label>Do you want this event for all day?</label>
-                    <input type="checkbox" name="allDay" id="allDay" onChange={allDayHandler} value={title}></input>
+                    <input type="checkbox" name="allDay" id="allDay" onChange={allDayHandler} checked={allDay} className="radio__allDay"></input>
                 </div>
                 <div className="date__container">
                     <div className="date__wrapper">
@@ -107,9 +123,6 @@ const AddEventModal = ({flag, dateInfo, setFlagHandler, eventInfo}:{flag:boolean
                             dateFormat="MMMM d, yyyy HH:mm "
                             showTimeSelect
                         />
-                    </div>
-                    <div className="time__wrapper">
-                        
                     </div>
                 </div>
                 <Btn onClick={closeHandler}>Add</Btn>

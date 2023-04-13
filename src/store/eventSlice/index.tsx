@@ -11,6 +11,14 @@ const eventSlice = createSlice({
     reducers:{
         addEvent(state, action:EventAction){
             state.events = state.events.concat(action.payload)
+        },
+        editEvent(state, action:EventAction){
+            let editable = state.events.find((elem)=>{
+                return (elem.id === action.payload.id)
+            })
+            state.events = [...state.events, editable = {
+                ...action.payload
+            }]
         }
     }
 })

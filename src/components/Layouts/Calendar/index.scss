@@ -38,19 +38,24 @@
         display: flex;
         gap: 30px;
     }
+    .input__title{
+        width: 60%;
+    }
+    .radio__allDay{
+        min-width: 10%;
+    }
     .date__container{
-        display: grid;
-        max-width: 500px;
-        grid-template-columns: 1fr 1fr;
         .react-datepicker__close-icon{
             right: 4%;
         }
-        .time__wrapper{
+        .date__wrapper{
             display: grid;
-            grid-template-columns: 1fr;
-            justify-content: center;
-            grid-template-rows: 0.5fr 1fr 0.5fr 1fr;
+            grid-template-columns: 0.5fr 1fr;
+            grid-template-rows: 1fr 1fr ;
+            column-gap: 15px;
+            row-gap: 30px;
         }
+
     }
 
 }

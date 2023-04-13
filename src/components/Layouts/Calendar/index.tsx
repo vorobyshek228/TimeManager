@@ -43,6 +43,8 @@ const Calendar = () => {
     }
     const handler = (eventInfo:EventClickArg) =>{
         setEventInfo(eventInfo)
+        console.log(eventInfo)
+        console.log('ins handler')
         setFlag(true)
 
     }
@@ -82,6 +84,7 @@ const Calendar = () => {
                         initialView="dayGridMonth" 
                         height='95vh'
                         eventClick={function(eventInfo){
+                            console.log(eventInfo)
                             handler(eventInfo)
                         }}
                         droppable={true}
@@ -92,7 +95,7 @@ const Calendar = () => {
                         }}
                     />
                 </div>
-                <AddEventModal flag={flag} eventInfo={eventInfo} setFlagHandler={()=>{setFlag(false); setDateInfo(null)}} dateInfo={dateInfo}/>
+                <AddEventModal flag={flag} eventInfo={eventInfo} setFlagHandler={()=>{setFlag(false); setDateInfo(null); setEventInfo(null)}} dateInfo={dateInfo}/>
             </div>
             <ModalWrapper flag={flag} onClick={() => {setFlag(false); setDateInfo(null)}}/>
         </>
